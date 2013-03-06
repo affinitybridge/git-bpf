@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#
+# Usage: ./install.sh <path_to_repository>
+#
+# Where <path_to_repository> is the path to the repository you wish to install
+# these scripts to. If nothing is provided, it will default to the current
+# directory.
+#
+
 SCRIPT_DIR_NAME="ab-git-scripts"
 
 SOURCE_URL="https://github.com/affinitybridge/git-scripts.git"
