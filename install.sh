@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 SCRIPT_DIR_NAME="ab-git-scripts"
 SOURCE_URL="https://github.com/affinitybridge/git-scripts.git"
@@ -13,10 +13,10 @@ COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
 
 if [ ! -d ${SOURCE_DIR} ]; then
   # Install local copy of scripts to home dir.
-  git clone ${SOURCE_URL} ${SOURCE_DIR}
+  git clone --quiet ${SOURCE_URL} ${SOURCE_DIR}
 else
   # Make sure local copy of scripts is up to date.
-  git ${SOURCE_CONTEXT} pull origin master
+  git ${SOURCE_CONTEXT} pull --quiet origin master
 fi
 
 if [ -L ${TARGET_DIR} ]; then
@@ -28,3 +28,12 @@ ln -s ${SOURCE_DIR} ${TARGET_DIR}
 
 # Create local git aliases for scripts.
 git ${TARGET_CONTEXT} config --local alias.recreate-branch "!${COMMAND_RECREATE_BRANCH}"
+
+echo Affinity Bridge git scripts have been installed.
+echo
+echo "To uninstall, run the following:"
+echo "*** WARNING: be smart, don't blindly copy + paste! ***"
+echo " - rm ${TARGET_DIR}"
+echo " - rm -rf ${SOURCE_DIR}"
+echo " - git ${TARGET_CONTEXT} config --local --unset alias.recreate-branch"
+
