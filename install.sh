@@ -18,10 +18,10 @@ echo
 
 # Validate target repository before continuing.
 if [ ! -d "${TARGET_REPO}/.git" ]; then
-  echo "Error: Provided directory doesn't exist or isn't a git repository: '${TARGET_REPO}.'"
-  echo
+  echo "Error - Provided directory doesn't exist or isn't a git repository:"
+  echo -e "\t${TARGET_REPO}"
   echo "Either provide a path to a valid git repository or execute this script"
-  echo "from withing a repository."
+  echo "from within a repository."
   exit 1
 fi
 
