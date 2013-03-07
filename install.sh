@@ -48,7 +48,7 @@ echo -e " - Scripts will be located:\n\t${SOURCE_DIR}"
 echo -e " - The repository where the scripts the will be installed:\n\t${TARGET_REPO}"
 echo
 
-read -p "Do you want to continue? [Y/n] " -n 1
+read -p "Do you want to continue? [y/N] " -n 1
 echo
 
 # If reply is anything other than [Yy], exit.
@@ -77,7 +77,7 @@ ln -s ${SOURCE_DIR} ${TARGET_DIR}
 # Create local git aliases for scripts.
 git ${TARGET_CONTEXT} config --local alias.recreate-branch "!${COMMAND_RECREATE_BRANCH}"
 
-echo Affinity Bridge git scripts have been installed.
+echo "Affinity Bridge git scripts have been installed."
 echo
 echo "To uninstall, run the following:"
 echo -e "\trm ${TARGET_DIR}"
