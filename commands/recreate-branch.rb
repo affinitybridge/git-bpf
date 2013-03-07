@@ -15,7 +15,6 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
   def options(opts)
     opts.base = 'master'
-    opts.remote = 'origin'
     opts.exclude = []
 
     [
@@ -25,9 +24,6 @@ class RecreateBranch < GitFlow/'recreate-branch'
       ['-b', '--branch NAME',
         "Instead of deleting the source branch and replacng it with a new branch of the same name, leave the source branch and create a new branch called NAME.",
         lambda { |n| opts.branch = n }],
-      ['-r', '--remote NAME',
-        "The name of the remote to use when getting the latest source branch, defaults to #{opts.remote}.",
-        lambda { |r| opts.remote = r }],
       ['-x', '--exclude NAME',
         "Specify a list of branches to be excluded.",
         lambda { |n| opts.exclude.push(n) }],
@@ -138,13 +134,6 @@ class RecreateBranch < GitFlow/'recreate-branch'
       git('branch', '-m', tmp_source, source)
     else
       git('branch', '-D', tmp_source)
-    end
-
-    #
-    # Prompt for push to remote.
-    #
-    if promptYN "Branch #{opts.branch} has been (re)created, would you like to force-push it to #{opts.remote}?"
-      git('push', '--force', opts.remote, opts.branch)
     end
   end
 
