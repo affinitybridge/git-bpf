@@ -18,8 +18,8 @@ class RecreateBranch < GitFlow/'recreate-branch'
     opts.exclude = []
 
     [
-      ['-a', '--ancestor NAME',
-        "The name of the ancestor from which the source branch is based, defaults to #{opts.base}.",
+      ['-a', '--base NAME',
+        "A reference to the commit from which the source branch is based, defaults to #{opts.base}.",
         lambda { |n| opts.base = n }],
       ['-b', '--branch NAME',
         "Instead of deleting the source branch and replacng it with a new branch of the same name, leave the source branch and create a new branch called NAME.",
@@ -41,6 +41,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     # If no new branch name provided, replace the source branch.
     opts.branch = source if opts.branch == nil
 
+    # Perform some validation.
     if not branchExists? source
       terminate "Cannot recreate branch #{source} as it doesn't exist."
     end
@@ -67,6 +68,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
     # Prompt to continue.
     puts "The following branches will be merged when the new #{opts.branch} branch is created:\n - #{branches.join("\n - ")}"
+    puts "If you see something unexpected check that your '#{source}' branch is up to date and also '#{opts.base}' if it is branch."
     if not promptYN "Proceed with #{source} branch recreation?"
       terminate "Aborting."
     end
