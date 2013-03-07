@@ -10,7 +10,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
   @@prefix = "BRANCH-PER-FEATURE-PREFIX"
 
-  @help = "Recreates the source branch in place or as a new branch by re-merging all of the merge commits."
+  @documentation = "Recreates the source branch in place or as a new branch by re-merging all of the merge commits."
 
 
   def options(opts)
@@ -42,16 +42,20 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
     source = argv.pop
 
+    # If no new branch name provided, replace the source branch.
+    opts.branch = source if opts.branch == nil
+
     if not branchExists? source
       terminate "Cannot recreate branch #{source} as it doesn't exist."
     end
 
-    if opts.branch != nil and branchExists? opts.branch
+    if opts.branch != source and branchExists? opts.branch
       terminate "Cannot create branch #{opts.branch} as it already exists."
     end
 
-    # If no new branch name provided, replace the source branch.
-    opts.branch = source if opts.branch == nil
+    if not refExists? opts.base
+      terminate "Cannot find reference '#{opts.base}' to use as a base for new branch: #{opts.branch}."
+    end
 
     #
     # 1. Compile a list of merged branches from source branch.
@@ -84,19 +88,11 @@ class RecreateBranch < GitFlow/'recreate-branch'
     git('branch', '-m', source, tmp_source)
 
     #
-    # 3. Create new branch based on the remote version of 'base'.
+    # 3. Create new branch based on 'base'.
     #
-    remote_base = "#{opts.remote}/#{opts.base}"
-    puts "3. Creating new '#{opts.branch}' branch based on '#{remote_base}'..."
+    puts "3. Creating new '#{opts.branch}' branch based on '#{opts.base}'..."
 
-    if not branchExists? opts.base, opts.remote
-      puts "Cannot find #{remote_base}. Branch #{opts.base} must exist in the remote repository (#{opts.remote})."
-      # Return source branch to original state.
-      git("branch", "-m", tmp_source, source)
-      throw :exit
-    end
-
-    git('checkout', '-b', opts.branch, remote_base, '--quiet')
+    git('checkout', '-b', opts.branch, opts.base, '--quiet')
 
     #
     # 4. Begin merging in feature branches.
@@ -154,7 +150,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
   def getMergedBranches(base, source)
     branches = []
-    merges = git('rev-list', '--parents', '--merges', '--reverse', "#{base}...#{source}")
+    merges = git('rev-list', '--parents', '--merges', '--reverse', "#{base}...#{source}").strip
 
     merges.split("\n").each do |commits|
       parents = commits.split("\s")
@@ -162,7 +158,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
       parents.each do |parent|
         name = git('name-rev', parent, '--name-only').strip
-        unless name == base or name.include? source
+        unless name.include? base or name.include? source
           branches.push name
         end
       end
