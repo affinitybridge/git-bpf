@@ -27,6 +27,8 @@ class RecreateBranch < GitFlow/'recreate-branch'
       ['-x', '--exclude NAME',
         "Specify a list of branches to be excluded.",
         lambda { |n| opts.exclude.push(n) }],
+      ['-l', '--list',
+        lambda { |n| opts.list = true }],
     ]
   end
 
@@ -59,9 +61,15 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     puts "1. Processing branch '#{source}' for merge-commits..."
 
+    branches = getMergedBranches(opts.base, source)
+
+    if opts.list
+      terminate "\nBranches to be merged:\n - #{branches.join("\n - ")}"
+    end
+
     # Remove from the list any branches that have been explicity excluded using
     # the -x option
-    branches = getMergedBranches(opts.base, source).reject do |item| 
+    branches.reject! do |item|
       stripped = item.gsub /^remotes\/\w+\/([\w\-\/]+)$/, '\1'
       opts.exclude.include? stripped
     end
