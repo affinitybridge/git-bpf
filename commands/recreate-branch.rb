@@ -82,7 +82,9 @@ class RecreateBranch < GitFlow/'recreate-branch'
     # Prompt to continue.
     Tty.warn "The following branches will be merged when the new #{opts.branch} branch is created:\n#{branches.shell_list}"
     puts
-    puts "If you see something unexpected check:\n a) that your '#{source}' branch is up to date\n b) if '#{opts.base}' is a branch, make sure it is also up to date."
+    puts "If you see something unexpected check:"
+    puts "a) that your '#{source}' branch is up to date"
+    puts "b) if '#{opts.base}' is a branch, make sure it is also up to date."
     Tty.warn "If there are any non-merge commits in '#{source}', they will not be included in '#{opts.branch}'. You have been warned."
     if not promptYN "Proceed with #{source} branch recreation?"
       terminate "Aborting."
