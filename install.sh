@@ -22,8 +22,8 @@ TARGET_DIR="${TARGET_REPO}/.git/${SCRIPT_DIR_NAME}"
 TARGET_RERERE_REPO="${TARGET_REPO}/.git/rr-cache"
 TARGET_RERERE_CONTEXT="--work-tree=${TARGET_RERERE_REPO} --git-dir=${TARGET_RERERE_REPO}/.git"
 
-# TARGET_REMOTE_URL=`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAME}.url`
-TARGET_REMOTE_URL=${TARGET_REPO}/`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAME}.url`
+TARGET_REMOTE_URL=`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAME}.url`
+# TARGET_REMOTE_URL=${TARGET_REPO}/`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAME}.url`
 
 COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
 
@@ -99,6 +99,8 @@ if [ ! -d ${TARGET_REPO}/.git/rr-cache/.git ]; then
   git ${TARGET_RERERE_CONTEXT} init --quiet
   git ${TARGET_RERERE_CONTEXT} remote add ${TARGET_REMOTE_NAME} ${TARGET_REMOTE_URL}
   git ${TARGET_RERERE_CONTEXT} fetch --all --quiet
+
+  # TODO: Check if ${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH} exists before checking it out.
   git ${TARGET_RERERE_CONTEXT} checkout -b ${TARGET_RERERE_BRANCH} ${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH} --quiet
 fi
 
