@@ -29,34 +29,34 @@ COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
 
 echo
 echo "* INSTALLING AFFINITY BRIDGE GIT SCRIPTS *"
-echo
 
 # Validate target repository before continuing.
 if [ ! -d "${TARGET_REPO}/.git" ]; then
-  echo "Error - Provided directory doesn't exist or isn't a git repository:"
+  echo -e "Error - Provided directory doesn't exist or isn't a git repository:"
   echo -e "\t${TARGET_REPO}"
   echo "Either provide a path to a valid git repository or execute this script"
   echo "from within a repository."
   exit 1
 fi
 
-echo "If this is the first time running this script a copy of the AB git scripts"
-echo "repo will be cloned into your home directory."
-echo
-echo "If you already have a copy of the scripts in your home directory, we'll"
-echo "make sure it is up to date."
-echo
-echo "The directory will then be sym-linked into the target repository and local"
-echo "git aliases will be created for each command."
-echo
-echo "Details:"
-echo -e " - AB scripts source URL:\n\t${SOURCE_URL}"
-echo -e " - Scripts will be located:\n\t${SOURCE_DIR}"
-echo -e " - The repository where the scripts the will be installed:\n\t${TARGET_REPO}"
-echo -e " - git-rerere will be enabled in '${TARGET_REPO}'"
-echo -e " - git-rerere will be configured to automatically stage successful resolutions"
-echo -e " - A .git/rr-cache directory will be set up to synchronize with '${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH}'."
-echo
+echo -e "
+If this is the first time running this script a copy of the AB git scripts
+repo will be cloned into your home directory.
+
+If you already have a copy of the scripts in your home directory, we'll
+make sure it is up to date.
+
+The directory will then be sym-linked into the target repository and local
+git aliases will be created for each command.
+
+Details:
+ - AB scripts source URL:\n\t${SOURCE_URL}
+ - Scripts will be located:\n\t${SOURCE_DIR}
+ - The repository where the scripts the will be installed:\n\t${TARGET_REPO}
+ - git-rerere will be enabled in '${TARGET_REPO}'
+ - git-rerere will be configured to automatically stage successful resolutions
+ - A .git/rr-cache directory will be set up to synchronize with '${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH}'.
+"
 
 read -p "Do you want to continue? [y/N] " -n 1
 echo
@@ -104,12 +104,14 @@ if [ ! -d ${TARGET_REPO}/.git/rr-cache/.git ]; then
   git ${TARGET_RERERE_CONTEXT} checkout -b ${TARGET_RERERE_BRANCH} ${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH} --quiet
 fi
 
-echo "Affinity Bridge git scripts have been installed."
-echo
-echo "To uninstall, run the following:"
-echo -e "\trm ${TARGET_DIR}"
-echo -e "\trm -rf ${SOURCE_DIR}"
-echo -e "\tgit ${TARGET_CONTEXT} config --local --unset alias.recreate-branch"
-echo -e "\tgit ${TARGET_CONTEXT} config --local --unset rerere.enabled"
-echo -e "\tgit ${TARGET_CONTEXT} config --local --unset rerere.autoupdate"
-echo -e "\trm -rf ${TARGET_RERERE_REPO}/.git"
+echo -e "
+Affinity Bridge git scripts have been installed.
+
+To uninstall, run the following:
+  rm ${TARGET_DIR}
+  rm -rf ${SOURCE_DIR}
+  git ${TARGET_CONTEXT} config --local --unset alias.recreate-branch
+  git ${TARGET_CONTEXT} config --local --unset rerere.enabled
+  git ${TARGET_CONTEXT} config --local --unset rerere.autoupdate
+  rm -rf ${TARGET_RERERE_REPO}/.git
+"
