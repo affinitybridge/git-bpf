@@ -28,6 +28,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
         "Specify a list of branches to be excluded.",
         lambda { |n| opts.exclude.push(n) }],
       ['-l', '--list',
+        "Process source branch for merge commits and list them. Will not make any changes to any branches.",
         lambda { |n| opts.list = true }],
     ]
   end
@@ -59,7 +60,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     # 1. Compile a list of merged branches from source branch.
     #
-    puts "1. Processing branch '#{source}' for merge-commits..."
+    Tty.ohai "1. Processing branch '#{source}' for merge-commits..."
 
     branches = getMergedBranches(opts.base, source)
 
@@ -68,7 +69,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     end
 
     if opts.list
-      terminate "\nBranches to be merged:\n - #{branches.join("\n - ")}"
+      terminate "Branches to be merged:\n#{branches.shell_list}"
     end
 
     # Remove from the list any branches that have been explicity excluded using
@@ -79,8 +80,10 @@ class RecreateBranch < GitFlow/'recreate-branch'
     end
 
     # Prompt to continue.
-    puts "The following branches will be merged when the new #{opts.branch} branch is created:\n - #{branches.join("\n - ")}"
-    puts "If you see something unexpected check that your '#{source}' branch is up to date and also '#{opts.base}' if it is branch."
+    Tty.warn "The following branches will be merged when the new #{opts.branch} branch is created:\n#{branches.shell_list}"
+    puts
+    puts "If you see something unexpected check:\n a) that your '#{source}' branch is up to date\n b) if '#{opts.base}' is a branch, make sure it is also up to date."
+    Tty.warn "If there are any non-merge commits in '#{source}', they will not be included in '#{opts.branch}'. You have been warned."
     if not promptYN "Proceed with #{source} branch recreation?"
       terminate "Aborting."
     end
@@ -89,7 +92,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     # 2. Backup existing local source branch.
     #
     tmp_source = "#{@@prefix}-#{source}"
-    puts "2. Creating backup of #{source}, #{tmp_source}..."
+    Tty.ohai "2. Creating backup of #{source}, #{tmp_source}..."
 
     if branchExists? tmp_source
       terminate "Cannot create branch #{tmp_source} as one already exists. To continue, #{tmp_source} must be removed."
@@ -100,18 +103,18 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     # 3. Create new branch based on 'base'.
     #
-    puts "3. Creating new '#{opts.branch}' branch based on '#{opts.base}'..."
+    Tty.ohai "3. Creating new '#{opts.branch}' branch based on '#{opts.base}'..."
 
     git('checkout', '-b', opts.branch, opts.base, '--quiet')
 
     #
     # 4. Begin merging in feature branches.
     #
-    puts "4. Merging in feature branches..."
+    Tty.ohai "4. Merging in feature branches..."
 
     branches.each do |branch|
       begin
-        puts " - Attempting to merge '#{branch}'."
+        puts " - '#{branch}'"
         # Attempt to merge in the branch. If there is no conflict at all, we
         # just move on to the next one.
         git('merge', '--quiet', '--no-ff', '--no-edit', branch)
@@ -142,7 +145,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     # 5. Clean up.
     #
-    puts "5. Cleaning up temporary branches (#{tmp_source})."
+    Tty.ohai "5. Cleaning up temporary branches (#{tmp_source})."
 
     if source != opts.branch
       git('branch', '-m', tmp_source, source)
