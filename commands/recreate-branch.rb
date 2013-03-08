@@ -63,6 +63,10 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
     branches = getMergedBranches(opts.base, source)
 
+    if branches.empty?
+      terminate "No feature branches detected, '#{source}' matches '#{opts.base}'."
+    end
+
     if opts.list
       terminate "\nBranches to be merged:\n - #{branches.join("\n - ")}"
     end
@@ -157,7 +161,9 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
       parents.each do |parent|
         name = git('name-rev', parent, '--name-only').strip
-        unless name.include? base or name.include? source
+        alt_base = git('name-rev', base, '--name-only').strip
+        remote_heads = /remote\/\w+\/HEAD/
+        unless name.include? source or name.include? alt_base or name.match remote_heads
           branches.push name
         end
       end
