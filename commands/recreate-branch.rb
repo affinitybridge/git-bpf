@@ -132,7 +132,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
           puts "Record a resoloution by resolving the conflict."
           puts "Then run the following command to return your repository to its original state."
           puts "\n"
-          puts "git reset --hard #{tmp_source} && git branch -D #{tmp_source}"
+          puts "git checkout #{tmp_source} && git branch -D #{opts.branch} && git branch -m #{opts.branch}"
           puts "\n"
           puts "If you do not want to resolve the conflict, it is safe to just run the above command to restore your repository to the state it was in before executing this command."
           terminate
