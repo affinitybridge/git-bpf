@@ -12,6 +12,9 @@ SCRIPT_DIR_NAME="ab-git-scripts"
 TARGET_REMOTE_NAME="origin"
 TARGET_RERERE_BRANCH="rr-cache"
 
+COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
+COMMAND_SHARE_RERERE="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb share-rerere"
+
 SOURCE_URL="https://github.com/affinitybridge/git-scripts.git"
 SOURCE_DIR="${HOME}/.${SCRIPT_DIR_NAME}"
 SOURCE_CONTEXT="--work-tree=${SOURCE_DIR} --git-dir=${SOURCE_DIR}/.git"
@@ -23,10 +26,19 @@ TARGET_RERERE_REPO="${TARGET_REPO}/.git/rr-cache"
 TARGET_RERERE_CONTEXT="--work-tree=${TARGET_RERERE_REPO} --git-dir=${TARGET_RERERE_REPO}/.git"
 
 TARGET_REMOTE_URL=`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAME}.url`
-# TARGET_REMOTE_URL=${TARGET_REPO}/`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAME}.url`
+if [ ${?} -ne 0 ]; then
+  echo "Error - Target repository (${TARGET_REPO}) doesn't have a remote named: '${TARGET_REMOTE_NAME}'."
+  exit 1
+fi
 
-COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
-COMMAND_SHARE_RERERE="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb share-rerere"
+# Validate target repository before continuing.
+if [ ! -d "${TARGET_REPO}/.git" ]; then
+  echo -e "Error - Provided directory doesn't exist or isn't a git repository:"
+  echo -e "\t${TARGET_REPO}"
+  echo "Either provide a path to a valid git repository or execute this script"
+  echo "from within a repository."
+  exit 1
+fi
 
 link_hooks() {
   if [ -L ${TARGET_REPO}/.git/hooks/${1} ]; then
@@ -39,15 +51,6 @@ link_hooks() {
 
 echo
 echo "* INSTALLING AFFINITY BRIDGE GIT SCRIPTS *"
-
-# Validate target repository before continuing.
-if [ ! -d "${TARGET_REPO}/.git" ]; then
-  echo -e "Error - Provided directory doesn't exist or isn't a git repository:"
-  echo -e "\t${TARGET_REPO}"
-  echo "Either provide a path to a valid git repository or execute this script"
-  echo "from within a repository."
-  exit 1
-fi
 
 echo -e "
 If this is the first time running this script a copy of the AB git scripts
@@ -115,8 +118,17 @@ if [ ! -d ${TARGET_REPO}/.git/rr-cache/.git ]; then
   git ${TARGET_RERERE_CONTEXT} remote add ${TARGET_REMOTE_NAME} ${TARGET_REMOTE_URL}
   git ${TARGET_RERERE_CONTEXT} fetch --all --quiet
 
-  # TODO: Check if ${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH} exists before checking it out.
-  git ${TARGET_RERERE_CONTEXT} checkout -b ${TARGET_RERERE_BRANCH} ${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH} --quiet
+  # Check if remote rr-cache branch exists. If not, create it.
+  git ${TARGET_RERERE_CONTEXT} ls-remote --exit-code ${TARGET_REMOTE_NAME} ${TARGET_RERERE_BRANCH}
+  if [ ${?} -eq 0 ]; then
+    git ${TARGET_RERERE_CONTEXT} checkout -b ${TARGET_RERERE_BRANCH} ${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH} --quiet
+  else
+    git ${TARGET_RERERE_CONTEXT} checkout --orphan rr-cache
+    # Clean up new 'orphan' branch.
+    git ${TARGET_RERERE_CONTEXT} rm -rf ${TARGET_RERERE_REPO}/
+    git ${TARGET_RERERE_CONTEXT} commit -a --allow-empty -m 'Automatically creating branch to track conflict resolutions.'
+    git ${TARGET_RERERE_CONTEXT} push ${TARGET_REMOTE_NAME} ${TARGET_RERERE_BRANCH}
+  fi
 fi
 
 # Set up hooks.
