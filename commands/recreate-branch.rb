@@ -94,7 +94,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     # 2. Backup existing local source branch.
     #
     tmp_source = "#{@@prefix}-#{source}"
-    Tty.ohai "2. Creating backup of #{source}, #{tmp_source}..."
+    Tty.ohai "2. Creating backup of '#{source}', '#{tmp_source}'..."
 
     if branchExists? tmp_source
       terminate "Cannot create branch #{tmp_source} as one already exists. To continue, #{tmp_source} must be removed."
@@ -147,7 +147,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     # 5. Clean up.
     #
-    Tty.ohai "5. Cleaning up temporary branches (#{tmp_source})."
+    Tty.ohai "5. Cleaning up temporary branches ('#{tmp_source}')."
 
     if source != opts.branch
       git('branch', '-m', tmp_source, source)
