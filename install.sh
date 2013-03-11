@@ -28,6 +28,13 @@ TARGET_REMOTE_URL=`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAM
 COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
 COMMAND_SHARE_RERERE="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb share-rerere"
 
+link_hooks() {
+  if [ ! -L ${TARGET_REPO}/.git/hooks/${1} ]; then
+    # Link scripts into repository.
+    ln -s ../${SCRIPT_DIR_NAME}/hooks/${1}.rb ${TARGET_REPO}/.git/hooks/${1}
+  fi
+}
+
 echo
 echo "* INSTALLING AFFINITY BRIDGE GIT SCRIPTS *"
 
@@ -111,12 +118,7 @@ if [ ! -d ${TARGET_REPO}/.git/rr-cache/.git ]; then
 fi
 
 # Set up hooks.
-
-if [ ! -L ${TARGET_REPO}/.git/hooks/post-commit ]; then
-  # Link scripts into repository.
-  ln -s ../${SCRIPT_DIR_NAME}/hooks/post-commit.rb ${TARGET_REPO}/.git/hooks/post-commit
-fi
-
+link_hooks "post-commit"
 
 echo -e "
 Affinity Bridge git scripts have been installed.
