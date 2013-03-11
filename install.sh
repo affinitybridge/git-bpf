@@ -110,6 +110,14 @@ if [ ! -d ${TARGET_REPO}/.git/rr-cache/.git ]; then
   git ${TARGET_RERERE_CONTEXT} checkout -b ${TARGET_RERERE_BRANCH} ${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH} --quiet
 fi
 
+# Set up hooks.
+
+if [ ! -L ${TARGET_REPO}/.git/hooks/post-commit ]; then
+  # Link scripts into repository.
+  ln -s ../${SCRIPT_DIR_NAME}/hooks/post-commit.rb ${TARGET_REPO}/.git/hooks/post-commit
+fi
+
+
 echo -e "
 Affinity Bridge git scripts have been installed.
 
