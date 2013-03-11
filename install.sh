@@ -26,6 +26,7 @@ TARGET_REMOTE_URL=`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAM
 # TARGET_REMOTE_URL=${TARGET_REPO}/`git ${TARGET_CONTEXT} config --get remote.${TARGET_REMOTE_NAME}.url`
 
 COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
+COMMAND_SHARE_RERERE="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb share-rerere"
 
 echo
 echo "* INSTALLING AFFINITY BRIDGE GIT SCRIPTS *"
@@ -86,6 +87,7 @@ ln -s ${SOURCE_DIR} ${TARGET_DIR}
 
 # Create local git aliases for scripts.
 git ${TARGET_CONTEXT} config --local alias.recreate-branch "!${COMMAND_RECREATE_BRANCH}"
+git ${TARGET_CONTEXT} config --local alias.share-rerere "!${COMMAND_SHARE_RERERE}"
 
 # Set up rerere sharing.
 git ${TARGET_CONTEXT} config --local rerere.enabled true
@@ -111,6 +113,7 @@ To uninstall, run the following:
   rm ${TARGET_DIR}
   rm -rf ${SOURCE_DIR}
   git ${TARGET_CONTEXT} config --local --unset alias.recreate-branch
+  git ${TARGET_CONTEXT} config --local --unset alias.share-rerere
   git ${TARGET_CONTEXT} config --local --unset rerere.enabled
   git ${TARGET_CONTEXT} config --local --unset rerere.autoupdate
   rm -rf ${TARGET_RERERE_REPO}/.git
