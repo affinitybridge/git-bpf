@@ -29,7 +29,9 @@ COMMAND_RECREATE_BRANCH="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb recreate-branch"
 COMMAND_SHARE_RERERE="ruby .git/${SCRIPT_DIR_NAME}/bpf.rb share-rerere"
 
 link_hooks() {
-  if [ ! -L ${TARGET_REPO}/.git/hooks/${1} ]; then
+  if [ -L ${TARGET_REPO}/.git/hooks/${1} ]; then
+    echo "WARNING: Couldn't link '${1}' hook, already exists."
+  else
     # Link scripts into repository.
     ln -s ../${SCRIPT_DIR_NAME}/hooks/${1}.rb ${TARGET_REPO}/.git/hooks/${1}
   fi
@@ -131,4 +133,5 @@ To uninstall, run the following:
   git ${TARGET_CONTEXT} config --local --unset rerere.enabled
   git ${TARGET_CONTEXT} config --local --unset rerere.autoupdate
   rm -rf ${TARGET_RERERE_REPO}/.git
+  rm ${TARGET_REPO}/.git/hooks/post-commit
 "
