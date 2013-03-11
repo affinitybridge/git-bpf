@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-puts "Executing: post-commit.rb"
-
 # Ideally we would use a post-merge hook rather than having to check in our post-commit
 # hook whether we've just done a merge commit. But post-merge hooks do not fire if there
 # has been a merge conflict, even if it has been successfully dealt with by rerere. And
