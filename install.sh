@@ -57,6 +57,10 @@ Details:
  - git-rerere will be enabled in '${TARGET_REPO}'
  - git-rerere will be configured to automatically stage successful resolutions
  - A .git/rr-cache directory will be set up to synchronize with '${TARGET_REMOTE_NAME}/${TARGET_RERERE_BRANCH}'.
+
+NOTE: You may be asked to authenticate with a username & password.
+      This prompt is from GitHub. You can find instructions on how to
+      automatically authenticate here: https://help.github.com/articles/set-up-git#password-caching.
 "
 
 read -p "Do you want to continue? [y/N] " -n 1

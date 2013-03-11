@@ -60,7 +60,7 @@ Available commands:
     include ShareReReReMixin
 
     def execute(opts, argv)
-      git(*context(opts, "pull", "--quiet", opts.remote, opts.branch))
+      git(*context(opts, "pull", opts.remote, opts.branch))
     end
   end
 
