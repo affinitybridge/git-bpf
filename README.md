@@ -1,5 +1,15 @@
 Affinity Bridge's Branch-per-Feature Scripts
-=============================
+============================================
+
+Configure a repository and add some useful workflow commands.
+
+Performs the following actions in the target repository:
+
+ - enables ```git-rerere```
+ - configures ```git-rerere``` to automatically stage successful resolutions
+ - a .git/rr-cache directory will be set up to synchronize with a 'rr-cache' branch in the repository's remote.
+ - installs a ```post-merge``` git hook for automatic rr-cache syncing
+ - installs the bundled branch-per-feature helper commands
 
 ## Commands
 
