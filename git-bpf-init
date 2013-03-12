@@ -132,7 +132,7 @@ if [ ! -d ${TARGET_REPO}/.git/rr-cache/.git ]; then
 fi
 
 # Set up hooks.
-link_hooks "post-commit"
+link_hooks "post-merge"
 
 echo -e "
 Affinity Bridge git scripts have been installed.
@@ -145,5 +145,5 @@ To uninstall, run the following:
   git ${TARGET_CONTEXT} config --local --unset rerere.enabled
   git ${TARGET_CONTEXT} config --local --unset rerere.autoupdate
   rm -rf ${TARGET_RERERE_REPO}/.git
-  rm ${TARGET_REPO}/.git/hooks/post-commit
+  rm ${TARGET_REPO}/.git/hooks/post-merge
 "
