@@ -52,7 +52,7 @@ Download/clone repository and add ```git-bpf-init``` to your path (make sure it 
 
 ### Usage
 
-   git-bpf-init <target-repository>
+    git-bpf-init <target-repository>
 
  - If <target-repository> is not provided, <target-repository> defaults to your current directory (will fail if current directory is not a git repository).
  - The script requires the <target-repository> to have a remote named 'origin'.
