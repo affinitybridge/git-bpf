@@ -51,6 +51,7 @@ _Requires git >= 1.7.10.x_
 Download/clone repository and add ```git-bpf-init``` to your path (make sure it is executable).
 
 ### Usage
+
    git-bpf-init <target-repository>
 
  - If <target-repository> is not provided, <target-repository> defaults to your current directory (will fail if current directory is not a git repository).
