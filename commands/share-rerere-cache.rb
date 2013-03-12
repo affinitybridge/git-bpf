@@ -2,16 +2,6 @@ require 'lib/gitflow'
 require 'lib/git-helpers'
 
 module ShareReReReMixin
-  def context(context, *args)
-    # Git pull requires absolute paths when executed from outside of the
-    # repository's work tree.
-    params = [
-      "--git-dir=#{File.expand_path(context.git_dir)}",
-      "--work-tree=#{File.expand_path(context.work_tree)}"
-    ]
-    return params + args
-  end
-
   def options(opts)
     opts.work_tree = ".git/rr-cache"
     opts.git_dir = "#{opts.work_tree}/.git"
@@ -40,12 +30,12 @@ end
 #
 class ShareReReRe < GitFlow/'share-rerere'
 
-  @documentation = <<-HELP
-A collection of commands to help share your rr-cache.
+  @documentation = <<-HELP.undent
+    A collection of commands to help share your rr-cache.
 
-Available commands:
- - push
- - pull
+    Available commands:
+     - push
+     - pull
   HELP
 
   def execute(opts, argv)
@@ -60,7 +50,8 @@ Available commands:
     include ShareReReReMixin
 
     def execute(opts, argv)
-      git(*context(opts, "pull", '--quiet', opts.remote, opts.branch))
+      ctx = { git_dir: opts.git_dir, work_tree: opts.work_tree }
+      git(*context(ctx, "pull", '--quiet', opts.remote, opts.branch))
     end
   end
 
@@ -72,18 +63,19 @@ Available commands:
     include ShareReReReMixin
 
     def execute(opts, argv)
-      lines = git(*context(opts, "status", "--porcelain")).split("\n").map { |a| a.chomp }
+      ctx = { git_dir: opts.git_dir, work_tree: opts.work_tree }
+      lines = git(*context(ctx, "status", "--porcelain")).split("\n").map { |a| a.chomp }
       if lines.empty?
         terminate "No resolutions to share."
       end
 
       lines.each do |line|
-        if line =~ /^\?\?\s(\w+)\/$/
+        if line =~ /^\?\?\s(\w+)\//
           folder = line.split("\s").last
           message = "Sharing resolution: #{folder}."
-          git(*context(opts, "add", folder))
-          git(*context(opts, "commit", "-m", message))
-          git(*context(opts, "push", "--quiet", opts.remote, opts.branch))
+          git(*context(ctx, "add", folder))
+          git(*context(ctx, "commit", "-m", message))
+          git(*context(ctx, "push", "--quiet", opts.remote, opts.branch))
           puts message
         end
       end

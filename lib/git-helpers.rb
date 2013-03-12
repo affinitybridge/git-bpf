@@ -32,7 +32,23 @@ class Array
   end
 end
 
+class String
+  def undent
+    gsub(/^.{#{slice(/^ +/).length}}/, '')
+  end
+end
+
 module GitHelpersMixin
+  def context(context, *args)
+    # Git pull requires absolute paths when executed from outside of the
+    # repository's work tree.
+    params = [
+      "--git-dir=#{File.expand_path(context[:git_dir])}",
+      "--work-tree=#{File.expand_path(context[:work_tree])}"
+    ]
+    return params + args
+  end
+
   def branchExists?(branch)
     ref = (branch.include? "refs/heads/") ? branch : "refs/heads/#{branch}"
     begin
