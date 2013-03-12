@@ -4,3 +4,5 @@ $LOAD_PATH.unshift(base_path) unless $LOAD_PATH.include?(base_path)
 
 require 'commands/recreate-branch'
 require 'commands/share-rerere-cache'
+
+# require 'test/test'
