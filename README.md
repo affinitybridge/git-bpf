@@ -1,7 +1,7 @@
 Affinity Bridge's Branch-per-Feature Scripts
 =============================
 
-## Cammands
+## Commands
 
 ### git-recreate-branch
 
