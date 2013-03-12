@@ -3,5 +3,5 @@ require 'formula'
 class GitBpfInit < GithubGistFormula
     url 'https://raw.github.com/affinitybridge/git-scripts/v0.0.1/git-bpf-init'
     homepage 'https://github.com/affinitybridge/git-scripts'
-    sha1 'a06e6f5fa1795172bd7ae672dcfaaeca9936322b'
+    sha1 '57c85003d6003551529d6f5301d042c68c258336'
 end
