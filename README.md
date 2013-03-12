@@ -1,4 +1,4 @@
-Affinity Bridge's BPF Scripts
+Affinity Bridge's Branch-per-Feature Scripts
 =============================
 
 ## Cammands
@@ -37,3 +37,22 @@ Push any new resolutions to the designated <branch> on the remote.
 Pull any new resolutions to the designated <branch> on the remote.
 
 ## Install
+
+_Requires git >= 1.7.10.x_
+
+### Install git-bpf-init script
+
+**Mac OSX**
+
+    brew install --HEAD https://raw.github.com/affinitybridge/git-scripts/master/formula/git-bpf-init.rb
+
+**Linux**
+
+Download/clone repository and add ```git-bpf-init``` to your path (make sure it is executable).
+
+### Usage
+   git-bpf-init <target-repository>
+
+ - If <target-repository> is not provided, <target-repository> defaults to your current directory (will fail if current directory is not a git repository).
+ - The script requires the <target-repository> to have a remote named 'origin'.
+ - The script will create a 'master' copy of the scripts in your home directory: ```~/.ab-git-scripts```.
