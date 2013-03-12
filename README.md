@@ -52,7 +52,8 @@ _Requires git >= 1.7.10.x_
 
 ### Install git-bpf-init script
 
-**Mac OSX**
+**Mac OSX (requires [homebrew])**
+If you do not have [homebrew] the Linux instructions should work for you.
 
     brew install --HEAD https://raw.github.com/affinitybridge/git-scripts/master/formula/git-bpf-init.rb
 
@@ -70,3 +71,4 @@ Download/clone repository and add ```git-bpf-init``` to your path (make sure it 
 
 
 [Branch-per-Feature]: https://github.com/affinitybridge/git-scripts/wiki/Branch-per-feature-process
+[homebrew]: http://mxcl.github.com/homebrew/
