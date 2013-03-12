@@ -1,7 +1,7 @@
 Affinity Bridge's Branch-per-Feature Scripts
 ============================================
 
-Configure a repository and add some useful workflow commands.
+Configure a repository and add some useful [Branch-per-Feature] workflow commands.
 
 Performs the following actions in the target repository:
 
@@ -67,3 +67,6 @@ Download/clone repository and add ```git-bpf-init``` to your path (make sure it 
  - If <target-repository> is not provided, <target-repository> defaults to your current directory (will fail if current directory is not a git repository).
  - The script requires the <target-repository> to have a remote named 'origin'.
  - The script will create a 'master' copy of the scripts in your home directory: ```~/.ab-git-scripts```.
+
+
+[Branch-per-Feature]: https://github.com/affinitybridge/git-scripts/wiki/Branch-per-feature-process
