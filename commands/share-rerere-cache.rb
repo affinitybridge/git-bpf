@@ -50,7 +50,7 @@ class ShareReReRe < GitFlow/'share-rerere'
     include ShareReReReMixin
 
     def execute(opts, argv)
-      ctx = { git_dir: opts.git_dir, work_tree: opts.work_tree }
+      ctx = { :git_dir => opts.git_dir, :work_tree => opts.work_tree }
       git(*context(ctx, "pull", '--quiet', opts.remote, opts.branch))
     end
   end
@@ -63,7 +63,7 @@ class ShareReReRe < GitFlow/'share-rerere'
     include ShareReReReMixin
 
     def execute(opts, argv)
-      ctx = { git_dir: opts.git_dir, work_tree: opts.work_tree }
+      ctx = { :git_dir => opts.git_dir, :work_tree => opts.work_tree }
       lines = git(*context(ctx, "status", "--porcelain")).split("\n").map { |a| a.chomp }
       if lines.empty?
         terminate "No resolutions to share."
