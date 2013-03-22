@@ -50,8 +50,8 @@ class ShareReReRe < GitFlow/'share-rerere'
     include ShareReReReMixin
 
     def execute(opts, argv)
-      ctx = { :git_dir => opts.git_dir, :work_tree => opts.work_tree }
-      git(*context(ctx, "pull", '--quiet', opts.remote, opts.branch))
+      ctx = context(opts.work_tree, opts.git_dir)
+      git(*ctx, "pull", '--quiet', opts.remote, opts.branch)
     end
   end
 
@@ -63,8 +63,8 @@ class ShareReReRe < GitFlow/'share-rerere'
     include ShareReReReMixin
 
     def execute(opts, argv)
-      ctx = { :git_dir => opts.git_dir, :work_tree => opts.work_tree }
-      lines = git(*context(ctx, "status", "--porcelain")).split("\n").map { |a| a.chomp }
+      ctx = context(opts.work_tree, opts.git_dir)
+      lines = git(*ctx, "status", "--porcelain").split("\n").map { |a| a.chomp }
       if lines.empty?
         terminate "No resolutions to share."
       end
@@ -73,9 +73,9 @@ class ShareReReRe < GitFlow/'share-rerere'
         if line =~ /^\?\?\s(\w+)\//
           folder = line.split("\s").last
           message = "Sharing resolution: #{folder}."
-          git(*context(ctx, "add", folder))
-          git(*context(ctx, "commit", "-m", message))
-          git(*context(ctx, "push", "--quiet", opts.remote, opts.branch))
+          git(*ctx, "add", folder)
+          git(*ctx, "commit", "-m", message)
+          git(*ctx, "push", "--quiet", opts.remote, opts.branch)
           puts message
         end
       end

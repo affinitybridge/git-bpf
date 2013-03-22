@@ -39,12 +39,12 @@ class String
 end
 
 module GitHelpersMixin
-  def context(context, *args)
+  def context(work_tree, git_dir, *args)
     # Git pull requires absolute paths when executed from outside of the
     # repository's work tree.
     params = [
-      "--git-dir=#{File.expand_path(context[:git_dir])}",
-      "--work-tree=#{File.expand_path(context[:work_tree])}"
+      "--git-dir=#{File.expand_path(git_dir)}",
+      "--work-tree=#{File.expand_path(work_tree)}"
     ]
     return params + args
   end
