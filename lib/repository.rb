@@ -34,7 +34,7 @@ class Repository
 
   def remoteUrl(name)
     begin
-      config(false, "--get", "remote.#{name}.url")
+      config(false, "--get", "remote.#{name}.url").chomp
     rescue
       terminate "No remote named '#{name}' in repository: #{self.path}."
     end
@@ -56,9 +56,9 @@ class Repository
 
   def head
     begin
-      cmd("rev-parse", "--abbrev-ref", "HEAD")
+      cmd("rev-parse", "--quiet", "--abbrev-ref", "--verify", "HEAD")
     rescue
-      return false
+      return ''
     end
   end
 

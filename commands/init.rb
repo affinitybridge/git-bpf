@@ -89,8 +89,6 @@ class Init < GitFlow/'init'
       opoo "Rerere cache directory already exists; Initializing repository in existing rr-cache directory."
       rerere = Repository.init rerere_path
       rerere.cmd("remote", "add", opts.remote_name, target_remote_url)
-      rerere.fetch opts.remote_name
-      rerere.cmd("checkout", "rr-cache")
     else
       opoo "Rerere cache directory already exists and is a repository."
       rerere = Repository.new rerere_path
