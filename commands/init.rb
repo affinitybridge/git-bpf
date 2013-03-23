@@ -42,12 +42,14 @@ class Init < GitFlow/'init'
     #
     # 1. Link source scripts directory.
     #
+    ohai "1. Linking scripts directory to '#{source.path}'."
+
     scripts = File.join(target.path, '.git', opts.script_dir_name)
 
     if not File.exists? scripts
       File.symlink source.path, scripts
     elsif File.symlink? scripts
-      Tty.ohai "Symbolic link to '#{source.path}' already exists."
+      opoo "Symbolic link already exists."
     else
       terminate "Cannot create symbolic link (#{scripts})."
     end
@@ -61,6 +63,9 @@ class Init < GitFlow/'init'
       'recreate-branch',
       'share-rerere',
     ]
+
+    ohai "2. Creating aliases for commands:", commands.shell_list
+
     commands.each do |name|
       command = "!ruby #{base_command} #{name}"
       target.cmd("config", "--local", "alias.#{name}", command)
@@ -70,6 +75,8 @@ class Init < GitFlow/'init'
     #
     # 3. Set up rerere sharing.
     #
+    ohai "3. Setting up rerere sharing."
+
     target.config(true, "rerere.enabled", "true")
     target.config(true, "rerere.autoupdate", "true")
 
@@ -79,13 +86,13 @@ class Init < GitFlow/'init'
     if not File.directory? rerere_path
       rerere = Repository::clone target_remote_url, rerere_path
     elsif not File.directory? File.join(rerere_path, '.git')
-      Tty.ohai "Rerere cache directory already exists; Initializing repository in existing rr-cache directory."
+      opoo "Rerere cache directory already exists; Initializing repository in existing rr-cache directory."
       rerere = Repository.init rerere_path
       rerere.cmd("remote", "add", opts.remote_name, target_remote_url)
       rerere.fetch opts.remote_name
       rerere.cmd("checkout", "rr-cache")
     else
-      Tty.ohai "Rerere cache directory already exists and is a repository."
+      opoo "Rerere cache directory already exists and is a repository."
       rerere = Repository.new rerere_path
     end
 
@@ -113,19 +120,22 @@ class Init < GitFlow/'init'
       'post-merge',
       'post-commit'
     ]
+
+    ohai "4. Creating symbolic links to git-hooks:", hooks.shell_list
+
     hooks.each do |name|
       target_hook_path = File.join(hooks_dir, name)
       source_hook_path = File.join(scripts, "hooks", "#{name}.rb")
       if Dir.glob("#{target_hook_path}*").empty?
         File.symlink source_hook_path, target_hook_path
       else
-        Tty.ohai "Couldn't link '#{name}' hook as it already exists."
+        opoo "Couldn't link '#{name}' hook as it already exists."
       end
     end
 
     #
     # Success!
     #
-    Tty.ohai "Success!"
+    ohai "Success!"
   end
 end

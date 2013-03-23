@@ -60,7 +60,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     # 1. Compile a list of merged branches from source branch.
     #
-    Tty.ohai "1. Processing branch '#{source}' for merge-commits..."
+    ohai "1. Processing branch '#{source}' for merge-commits..."
 
     branches = getMergedBranches(opts.base, source)
 
@@ -80,12 +80,12 @@ class RecreateBranch < GitFlow/'recreate-branch'
     end
 
     # Prompt to continue.
-    Tty.warn "The following branches will be merged when the new #{opts.branch} branch is created:\n#{branches.shell_list}"
+    opoo "The following branches will be merged when the new #{opts.branch} branch is created:\n#{branches.shell_list}"
     puts
     puts "If you see something unexpected check:"
     puts "a) that your '#{source}' branch is up to date"
     puts "b) if '#{opts.base}' is a branch, make sure it is also up to date."
-    Tty.warn "If there are any non-merge commits in '#{source}', they will not be included in '#{opts.branch}'. You have been warned."
+    opoo "If there are any non-merge commits in '#{source}', they will not be included in '#{opts.branch}'. You have been warned."
     if not promptYN "Proceed with #{source} branch recreation?"
       terminate "Aborting."
     end
@@ -94,7 +94,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     # 2. Backup existing local source branch.
     #
     tmp_source = "#{@@prefix}-#{source}"
-    Tty.ohai "2. Creating backup of '#{source}', '#{tmp_source}'..."
+    ohai "2. Creating backup of '#{source}', '#{tmp_source}'..."
 
     if branchExists? tmp_source
       terminate "Cannot create branch #{tmp_source} as one already exists. To continue, #{tmp_source} must be removed."
@@ -105,14 +105,14 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     # 3. Create new branch based on 'base'.
     #
-    Tty.ohai "3. Creating new '#{opts.branch}' branch based on '#{opts.base}'..."
+    ohai "3. Creating new '#{opts.branch}' branch based on '#{opts.base}'..."
 
     git('checkout', '-b', opts.branch, opts.base, '--quiet')
 
     #
     # 4. Begin merging in feature branches.
     #
-    Tty.ohai "4. Merging in feature branches..."
+    ohai "4. Merging in feature branches..."
 
     branches.each do |branch|
       begin
@@ -147,7 +147,7 @@ class RecreateBranch < GitFlow/'recreate-branch'
     #
     # 5. Clean up.
     #
-    Tty.ohai "5. Cleaning up temporary branches ('#{tmp_source}')."
+    ohai "5. Cleaning up temporary branches ('#{tmp_source}')."
 
     if source != opts.branch
       git('branch', '-m', tmp_source, source)
