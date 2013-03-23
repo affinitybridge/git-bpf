@@ -4,7 +4,6 @@ require 'lib/git-helpers'
 module ShareReReReMixin
   def options(opts)
     opts.work_tree = ".git/rr-cache"
-    opts.git_dir = "#{opts.work_tree}/.git"
     opts.branch = "rr-cache"
     opts.remote = "origin"
 
@@ -12,9 +11,6 @@ module ShareReReReMixin
       ['-c', '--cache_dir DIR',
         "The location of your rr-cache dir, defaults to #{opts.work_tree}.",
         lambda { |n| opts.rr_cache_dir = n }],
-      ['-g', '--git-dir DIR',
-        "The location of your rr-cache .git dir, defaults to #{opts.git_dir}.",
-        lambda { |n| opts.git_dir = n }],
       ['-b', '--branch NAME',
         "The name of the branch your rr-cache is stored in, defaults to #{opts.branch}.",
         lambda { |n| opts.branch = n }],
@@ -50,8 +46,8 @@ class ShareReReRe < GitFlow/'share-rerere'
     include ShareReReReMixin
 
     def execute(opts, argv)
-      ctx = context(opts.work_tree, opts.git_dir)
-      git(*ctx, "pull", '--quiet', opts.remote, opts.branch)
+      rerere = Repository.new opts.work_tree
+      rerere.cmd("pull", '--quiet', opts.remote, opts.branch)
     end
   end
 
@@ -63,8 +59,8 @@ class ShareReReRe < GitFlow/'share-rerere'
     include ShareReReReMixin
 
     def execute(opts, argv)
-      ctx = context(opts.work_tree, opts.git_dir)
-      lines = git(*ctx, "status", "--porcelain").split("\n").map { |a| a.chomp }
+      rerere = Repository.new opts.work_tree
+      lines = rerere.cmd("status", "--porcelain").split("\n").map { |a| a.chomp }
       if lines.empty?
         terminate "No resolutions to share."
       end
@@ -73,9 +69,9 @@ class ShareReReRe < GitFlow/'share-rerere'
         if line =~ /^\?\?\s(\w+)\//
           folder = line.split("\s").last
           message = "Sharing resolution: #{folder}."
-          git(*ctx, "add", folder)
-          git(*ctx, "commit", "-m", message)
-          git(*ctx, "push", "--quiet", opts.remote, opts.branch)
+          rerere.cmd("add", folder)
+          rerere.cmd("commit", "-m", message)
+          rerere.cmd("push", "--quiet", opts.remote, opts.branch)
           puts message
         end
       end
