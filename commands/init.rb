@@ -116,7 +116,7 @@ class Init < GitFlow/'init'
     hooks_dir = File.join(target.git_dir, "hooks")
     hooks = [
       'post-merge',
-      'post-commit'
+      'post-checkout'
     ]
 
     ohai "4. Creating symbolic links to git-hooks:", hooks.shell_list
@@ -124,7 +124,14 @@ class Init < GitFlow/'init'
     hooks.each do |name|
       target_hook_path = File.join(hooks_dir, name)
       source_hook_path = File.join(scripts, "hooks", "#{name}.rb")
-      if Dir.glob("#{target_hook_path}*").empty?
+      files = Dir.glob("#{target_hook_path}*")
+      write = files.empty?
+
+      if not write and promptYN "Existing hook '#{name}' detected, overwrite?"
+        write = File.delete(files.shell_s) > 0
+      end
+
+      if write
         File.symlink source_hook_path, target_hook_path
       else
         opoo "Couldn't link '#{name}' hook as it already exists."

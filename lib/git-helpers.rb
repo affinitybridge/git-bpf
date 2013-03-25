@@ -113,7 +113,6 @@ module GitHelpersMixin
     unless STDIN.gets.chomp == 'y'
       return false
     end
-    puts "\n"
     return true
   end
 end
