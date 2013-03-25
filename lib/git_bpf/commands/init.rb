@@ -67,7 +67,7 @@ class Init < GitFlow/'init'
     ohai "2. Creating aliases for commands:", commands.shell_list
 
     commands.each do |name|
-      command = "!bundle exec _git-bpf #{name}"
+      command = "!_git-bpf #{name}"
       target.cmd("config", "--local", "alias.#{name}", command)
     end
 
