@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["tom@affinitybridge.com"]
   spec.description   = %q{A collection of commands to help with implementing the branch-per-feature git development workflow.}
   spec.summary       = %q{Git branch-per-feature helper commands.}
-  spec.homepage      = "https://github.com/affinitybridge/git-scripts"
+  spec.homepage      = "https://github.com/affinitybridge/git-bpf"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
