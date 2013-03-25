@@ -1,6 +1,6 @@
-require 'git-bpf/lib/gitflow'
-require 'git-bpf/lib/git-helpers'
-require 'git-bpf/lib/repository'
+require 'git_bpf/lib/gitflow'
+require 'git_bpf/lib/git-helpers'
+require 'git_bpf/lib/repository'
 
 #
 # init: 
@@ -35,19 +35,19 @@ class Init < GitFlow/'init'
       terminate
     end
 
-    source = Repository.new File.join(File.dirname(__FILE__), '../')
+    source_path = File.join File.dirname(__FILE__), '../'
     target = Repository.new(argv.length == 1 ? argv.pop : Dir.getwd)
 
 
     #
     # 1. Link source scripts directory.
     #
-    ohai "1. Linking scripts directory to '#{source.path}'."
+    ohai "1. Linking scripts directory to '#{source_path}'."
 
     scripts = File.join(target.path, '.git', opts.script_dir_name)
 
     if not File.exists? scripts
-      File.symlink source.path, scripts
+      File.symlink source_path, scripts
     elsif File.symlink? scripts
       opoo "Symbolic link already exists."
     else

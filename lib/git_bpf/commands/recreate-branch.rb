@@ -1,5 +1,5 @@
-require 'git-bpf/lib/gitflow'
-require 'git-bpf/lib/git-helpers'
+require 'git_bpf/lib/gitflow'
+require 'git_bpf/lib/git-helpers'
 
 #
 # recreate_branch: Recreate a branch based on the merge commits it's comprised of.
