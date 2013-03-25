@@ -52,14 +52,8 @@ _Requires git >= 1.7.10.x_
 
 ### Install git-bpf-init script
 
-**Mac OSX (requires [homebrew])**
-If you do not have [homebrew] the Linux instructions should work for you.
-
-    brew install --HEAD https://raw.github.com/affinitybridge/git-scripts/master/formula/git-bpf-init.rb
-
-**Linux**
-
-Download/clone repository and add ```git-bpf-init``` to your path (make sure it is executable).
+git_bpf is packaged as a Ruby Gem and hosted on [RubyGems]
+    gem install git_bpf
 
 ### Usage
 
@@ -67,8 +61,7 @@ Download/clone repository and add ```git-bpf-init``` to your path (make sure it 
 
  - If <target-repository> is not provided, <target-repository> defaults to your current directory (will fail if current directory is not a git repository).
  - The script requires the <target-repository> to have a remote named 'origin'.
- - The script will create a 'master' copy of the scripts in your home directory: ```~/.ab-git-scripts```.
 
 
-[Branch-per-Feature]: https://github.com/affinitybridge/git-scripts/wiki/Branch-per-feature-process
-[homebrew]: http://mxcl.github.com/homebrew/
+[Branch-per-Feature]: https://github.com/affinitybridge/git-bpf/wiki/Branch-per-feature-process
+[RubyGems]: http://rubygems.org/
