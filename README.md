@@ -53,6 +53,7 @@ _Requires git >= 1.7.10.x_
 ### Install git-bpf-init script
 
 git_bpf is packaged as a Ruby Gem and hosted on [RubyGems]
+    
     gem install git_bpf
 
 ### Usage
