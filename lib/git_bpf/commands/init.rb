@@ -12,7 +12,7 @@ class Init < GitFlow/'init'
   @documentation = ""
 
   def options(opts)
-    opts.script_dir_name = 'git-bpf-scripts'
+    opts.script_dir_name = 'git-bpf'
     opts.remote_name = 'origin'
     opts.rerere_branch = 'rr-cache'
 
@@ -35,7 +35,8 @@ class Init < GitFlow/'init'
       terminate
     end
 
-    source_path = File.join File.dirname(__FILE__), '../'
+    # TODO: There's likely a better way to do this.
+    source_path = File.join File.dirname(__FILE__), '..'
     target = Repository.new(argv.length == 1 ? argv.pop : Dir.getwd)
 
 
@@ -58,7 +59,6 @@ class Init < GitFlow/'init'
     #
     # 2. Create aliases for commands.
     #
-    base_command = File.join('.git', opts.script_dir_name, 'bpf.rb')
     commands = [
       'recreate-branch',
       'share-rerere',
@@ -67,7 +67,7 @@ class Init < GitFlow/'init'
     ohai "2. Creating aliases for commands:", commands.shell_list
 
     commands.each do |name|
-      command = "!ruby #{base_command} #{name}"
+      command = "!bundle exec git-bpf #{name}"
       target.cmd("config", "--local", "alias.#{name}", command)
     end
 
