@@ -1,5 +1,6 @@
-require 'lib/gitflow'
-require 'lib/git-helpers'
+require 'git-bpf/lib/gitflow'
+require 'git-bpf/lib/git-helpers'
+require 'git-bpf/lib/repository'
 
 module ShareReReReMixin
   def options(opts)
