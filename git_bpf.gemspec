@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{A collection of commands to help with implementing the branch-per-feature git development workflow.}
   spec.summary       = %q{Git branch-per-feature helper commands.}
   spec.homepage      = "https://github.com/affinitybridge/git-bpf"
-  spec.license       = "MIT"
+  spec.license       = "BSD"
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
