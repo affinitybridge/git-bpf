@@ -63,6 +63,9 @@ git_bpf is packaged as a Ruby Gem and hosted on [RubyGems]
  - If <target-repository> is not provided, <target-repository> defaults to your current directory (will fail if current directory is not a git repository).
  - The script requires the <target-repository> to have a remote named 'origin'.
 
+## Upgrading
+
+Upgrading from older development versions of these scripts is a little bit sketchy. The steps possible steps involved are detailed [here](https://gist.github.com/tnightingale/59f44847526e1cc20bf7). Read through the document and run the steps that apply to you.
 
 [Branch-per-Feature]: https://github.com/affinitybridge/git-bpf/wiki/Branch-per-feature-process
 [RubyGems]: http://rubygems.org/
