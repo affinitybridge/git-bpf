@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
 
 # Pull latest conflict resolutions.
-`git share-rerere pull`
+remote_name = `git config --get gitbpf.remotename`.chomp
+`git share-rerere pull -r #{remote_name}`

@@ -86,8 +86,8 @@ class Repository
     return true
   end
 
-  def self.clone(url, dest)
-    git('clone', url, dest)
+  def self.clone(url, dest, name = 'origin')
+    git('clone', '-o', name, url, dest)
     Repository.new dest
   end
 

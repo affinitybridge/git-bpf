@@ -80,11 +80,13 @@ class Init < GitFlow/'init'
     target.config(true, "rerere.enabled", "true")
     target.config(true, "rerere.autoupdate", "true")
 
+    target.config(true, "gitbpf.remotename", opts.remote_name)
+
     rerere_path = File.join(target.git_dir, 'rr-cache')
     target_remote_url = target.remoteUrl(opts.remote_name)
 
     if not File.directory? rerere_path
-      rerere = Repository::clone target_remote_url, rerere_path
+      rerere = Repository::clone target_remote_url, rerere_path, opts.remote_name
     elsif not File.directory? File.join(rerere_path, '.git')
       opoo "Rerere cache directory already exists; Initializing repository in existing rr-cache directory."
       rerere = Repository.init rerere_path
