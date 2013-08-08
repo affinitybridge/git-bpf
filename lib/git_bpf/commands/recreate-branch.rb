@@ -169,7 +169,13 @@ class RecreateBranch < GitFlow/'recreate-branch'
         alt_base = git('name-rev', base, '--name-only').strip
         remote_heads = /remote\/\w+\/HEAD/
         unless name.include? source or name.include? alt_base or name.match remote_heads
-          branches.push name
+          # Make sure not to include the tilde part of a branch name (e.g. '~2')
+          # as this signifies a commit that's behind the head of the branch but
+          # we want to merge in the head of the branch.
+          name = name.partition('~')[0]
+          # This can lead to duplicate branches, because the name may have only
+          # differed in the tilde portion ('mybranch~1', 'mybranch~2', etc.)
+          branches.push name unless branches.include? name
         end
       end
     end
