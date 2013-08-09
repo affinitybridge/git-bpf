@@ -83,8 +83,12 @@ module GitHelpersMixin
     return params + args
   end
 
-  def branchExists?(branch)
-    ref = (branch.include? "refs/heads/") ? branch : "refs/heads/#{branch}"
+  def branchExists?(branch, remote = nil)
+    if remote
+      ref = "refs/remotes/#{remote}/#{branch}"
+    else
+      ref = (branch.include? "refs/heads/") ? branch : "refs/heads/#{branch}"
+    end
     begin
       git('show-ref', '--verify', '--quiet', ref)
     rescue

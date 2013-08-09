@@ -30,6 +30,13 @@ class RecreateBranch < GitFlow/'recreate-branch'
       ['-l', '--list',
         "Process source branch for merge commits and list them. Will not make any changes to any branches.",
         lambda { |n| opts.list = true }],
+      ['-d', '--discard',
+        "Discard the existing local source branch and checkout a new source branch from the remote if one exists. If no remote is specified with -r, gitbpf will use the configured remote, or origin if none is configured.",
+        lambda { |n| opts.discard = true }],
+      ['-r', '--remote NAME',
+        "Specify the remote repository to work with. Only works with the -d option.",
+        lambda { |n| opts.remote = n }],
+
     ]
   end
 
@@ -44,6 +51,28 @@ class RecreateBranch < GitFlow/'recreate-branch'
     # If no new branch name provided, replace the source branch.
     opts.branch = source if opts.branch == nil
 
+    if not refExists? opts.base
+      terminate "Cannot find reference '#{opts.base}' to use as a base for new branch: #{opts.branch}."
+    end
+
+    if opts.discard
+      unless opts.remote
+        repo = Repository.new(Dir.getwd)
+        remote_name = repo.config(true, "--get", "gitbpf.remotename").chomp
+        opts.remote = remote_name.empty? ? 'origin' : remote_name
+      end
+      git('fetch', opts.remote)
+      if branchExists?(source, opts.remote)
+        opoo "This will delete your local '#{source}' branch if it exists and create it afresh from the #{opts.remote} remote."
+        if not promptYN "Continue?"
+          terminate "Aborting."
+        end
+        git('checkout', opts.base)
+        git('branch', '-D', source) if branchExists? source
+        git('checkout', source)
+      end
+    end
+
     # Perform some validation.
     if not branchExists? source
       terminate "Cannot recreate branch #{source} as it doesn't exist."
@@ -51,10 +80,6 @@ class RecreateBranch < GitFlow/'recreate-branch'
 
     if opts.branch != source and branchExists? opts.branch
       terminate "Cannot create branch #{opts.branch} as it already exists."
-    end
-
-    if not refExists? opts.base
-      terminate "Cannot find reference '#{opts.base}' to use as a base for new branch: #{opts.branch}."
     end
 
     #
