@@ -74,7 +74,8 @@ class Init < GitFlow/'init'
     source_path = File.expand_path("..", File.dirname(__FILE__))
     target = Repository.new(argv.length == 1 ? argv.pop : Dir.getwd)
 
-    # First remove any existing symlinks to the git_bpf source
+    # Perform some cleanup in case this repo was previously initalized.
+    target.config(true, '--remove-section', 'gitbpf') rescue nil
     rmSymlinks(target.git_dir, source_path)
 
     #
