@@ -30,6 +30,15 @@ class Init < GitFlow/'init'
     ]
   end
 
+  # Removes all aliases to git-bpf commands.
+  def removeCommandAliases(repo)
+    config = repo.config(true, '--list').lines.each do |line|
+      next unless line.start_with? 'alias.' and line.match /\!_git\-bpf/
+      a = /alias\.([a-zA-Z0-9\-_]+)\=(.)*/.match(line)[1]
+      repo.config(true, '--unset', "alias.#{a}")
+    end
+  end
+
   # Removes all symlinks to targets within source_location that are found
   # within path.
   def rmSymlinks(path, source_location)
@@ -76,6 +85,7 @@ class Init < GitFlow/'init'
 
     # Perform some cleanup in case this repo was previously initalized.
     target.config(true, '--remove-section', 'gitbpf') rescue nil
+    removeCommandAliases target
     rmSymlinks(target.git_dir, source_path)
 
     #
