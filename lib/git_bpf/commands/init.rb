@@ -1,6 +1,7 @@
 require 'git_bpf/lib/gitflow'
 require 'git_bpf/lib/git-helpers'
 require 'git_bpf/lib/repository'
+require 'Find'
 
 #
 # init: 
@@ -29,16 +30,63 @@ class Init < GitFlow/'init'
     ]
   end
 
+  # Removes all aliases to git-bpf commands.
+  def removeCommandAliases(repo)
+    config = repo.config(true, '--list').lines.each do |line|
+      next unless line.start_with? 'alias.' and line.match /\!_git\-bpf/
+      a = /alias\.([a-zA-Z0-9\-_]+)\=(.)*/.match(line)[1]
+      repo.config(true, '--unset', "alias.#{a}")
+    end
+  end
+
+  # Removes all symlinks to targets within source_location that are found
+  # within path.
+  def rmSymlinks(path, source_location)
+    targets_to_check = [source_location]
+    all_targets = []
+
+    # Find all symlink targets that represent a path within source_location.
+    while targets_to_check.length > 0
+      git_bpf_target = targets_to_check.pop
+      Find.find(path) do |p|
+        if File.symlink?(p)
+          target =  File.readlink(p)
+          if target.include? git_bpf_target and not targets_to_check.include? p
+            targets_to_check.push p
+          end
+        end
+      end
+      all_targets.push git_bpf_target
+    end
+
+    # Now delete any symlink whose target path includes any of the paths we
+    # have identified.
+    Find.find(path) do |p|
+      if File.symlink? p
+        target = File.readlink p
+        all_targets.each do |t|
+          if target.include? t
+            File.unlink p
+            break
+          end
+        end
+      end
+    end
+  end
+
   def execute(opts, argv)
     if argv.length > 1
       run 'init', '--help'
       terminate
     end
 
-    # TODO: There's likely a better way to do this.
-    source_path = File.join File.dirname(__FILE__), '..'
+    source_path = File.expand_path("..", File.dirname(__FILE__))
     target = Repository.new(argv.length == 1 ? argv.pop : Dir.getwd)
 
+    # Perform some cleanup in case this repo was previously initalized.
+    target.config(true, '--remove-section', 'gitbpf') rescue nil
+    removeCommandAliases target
+    rmSymlinks(target.git_dir, source_path)
 
     #
     # 1. Link source scripts directory.
