@@ -50,9 +50,12 @@ class Init < GitFlow/'init'
       git_bpf_target = targets_to_check.pop
       Find.find(path) do |p|
         if File.symlink?(p)
-          target =  File.readlink(p)
-          if target.include? git_bpf_target and not targets_to_check.include? p
-            targets_to_check.push p
+          unless targets_to_check.include? p
+            target =  File.readlink(p)
+            matched_target = git_bpf_target.is_a?(Regexp) ? target =~ git_bpf_target : target.include?(git_bpf_target)
+            if matched_target
+              targets_to_check.push p
+            end
           end
         end
       end
@@ -65,7 +68,8 @@ class Init < GitFlow/'init'
       if File.symlink? p
         target = File.readlink p
         all_targets.each do |t|
-          if target.include? t
+          matched_target = t.is_a?(Regexp) ? target =~ t : target.include?(t)
+          if matched_target
             File.unlink p
             break
           end
@@ -86,7 +90,11 @@ class Init < GitFlow/'init'
     # Perform some cleanup in case this repo was previously initalized.
     target.config(true, '--remove-section', 'gitbpf') rescue nil
     removeCommandAliases target
-    rmSymlinks(target.git_dir, source_path)
+    # Create a regex to find symlinks to old gem paths.
+    pattern = /(.*)\/git_bpf-(?:\d)+\.(?:\d)+\.(?:\d)+\/(.*)/
+    matches = source_path.match(pattern)
+    source_path_regex = %r(#{Regexp.quote(matches[1])}\/git_bpf-(?:\d)+\.(?:\d)+\.(?:\d)+\/#{Regexp.quote(matches[2])})
+    rmSymlinks(target.git_dir, source_path_regex)
 
     #
     # 1. Link source scripts directory.
