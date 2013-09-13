@@ -88,7 +88,16 @@ class Init < GitFlow/'init'
     target = Repository.new(argv.length == 1 ? argv.pop : Dir.getwd)
 
     # Perform some cleanup in case this repo was previously initalized.
-    target.config(true, '--remove-section', 'gitbpf') rescue nil
+    begin
+      target.config(true, '--get-regexp', 'gitbpf')
+      # We only get here if the attempt to read this config section did
+      # not fail, which means the section exists, so we can remove it.
+      # (Without the above line, although we rescue the fail, a git fatal
+      # error is still output, which is confusing).
+      target.config(true, '--remove-section', 'gitbpf')
+    rescue
+      # There was no such section, do nothing.
+    end
     removeCommandAliases target
     # Create a regex to find symlinks to old gem paths.
     pattern = /(.*)\/git_bpf-(?:\d)+\.(?:\d)+\.(?:\d)+\/(.*)/
